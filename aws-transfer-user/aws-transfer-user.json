@@ -1,0 +1,196 @@
+{
+    "typeName": "AWS::Transfer::User",
+    "description": "An example resource schema demonstrating some basic constructs and validation rules.",
+    "definitions": {
+        "Tag": {
+            "description": "A key-value pair to associate with a resource.",
+            "type": "object",
+            "properties": {
+                "Key": {
+                    "type": "string",
+                    "description": "The key name of the tag. You can specify a value that is 1 to 128 Unicode characters in length and cannot be prefixed with aws:. You can use any of the following characters: the set of Unicode letters, digits, whitespace, _, ., /, =, +, and -.",
+                    "minLength": 1,
+                    "maxLength": 128
+                },
+                "Value": {
+                    "type": "string",
+                    "description": "The value for the tag. You can specify a value that is 0 to 256 Unicode characters in length and cannot be prefixed with aws:. You can use any of the following characters: the set of Unicode letters, digits, whitespace, _, ., /, =, +, and -.",
+                    "minLength": 0,
+                    "maxLength": 256
+                }
+            },
+            "required": [
+                "Key",
+                "Value"
+            ],
+            "additionalProperties": false
+        },
+        "HomeDirectoryMapEntry": {
+            "description": "Represents an object that contains entries and targets for HomeDirectoryMappings.",
+            "type": "object",
+            "properties": {
+                "Entry" : {
+                    "description": "Represents an entry for HomeDirectoryMappings.",
+                    "type": "string",
+                    "maxLength": 1024,
+                    "pattern": "^/.*"
+                },
+                "Target" : {
+                    "description": "Represents the map target that is used in a HomeDirectorymapEntry",
+                    "type": "string",
+                    "maxLength": 1024,
+                    "pattern": "^/.*"
+                }
+            },
+            "required": [
+                "Entry",
+                "Target"
+            ],
+            "additionalProperties": false
+        },
+        "SshPublicKey": {
+            "description": "Provides information about the public Secure Shell (SSH) key that is associated with a Transfer Family user account for the specific file transfer protocol-enabled server (as identified by ServerId).",
+            "type": "object",
+            "properties": {
+                "SshPublicKeyBody": {
+                    "description": "Specifies the content of the SSH public key as specified by the PublicKeyId.",
+                    "type": "string",
+                    "maxLength": 2048
+                }
+            },
+            "required": [
+                "SshPublicKeyBody"
+            ],
+            "additionalProperties": false
+        }
+    },
+    "properties": {
+        "HomeDirectory" : {
+            "description": "The landing directory (folder) for a user when they log in to the server using the client.",
+            "type": "string",
+            "maxLength": 1024,
+            "pattern": "^$|/.*"
+        },
+        "HomeDirectoryMappings" : {
+            "description": "Logical directory mappings that specify what Amazon S3 paths and keys should be visible to your user and how you want to make them visible.",
+            "type": "array",
+            "maxItems": 50,
+            "items": {
+                "$ref": "#/definitions/HomeDirectoryMapEntry"
+            }
+        },
+        "HomeDirectoryType" : {
+            "description": "The type of landing directory (folder) that you want your users' home directory to be when they log in to the server.",
+            "type": "string",
+            "pattern": "LOGICAL|PATH"
+        },
+        "Policy" : {
+            "description": "A session policy for your user so you can use the same IAM role across multiple users.",
+            "type": "string",
+            "maxLength": 2048
+        },
+        "PosixProfile" : {
+            "description": "Specifies the full POSIX identity, including user ID (Uid), group ID (Gid), and any secondary groups IDs (SecondaryGids), that controls your users' access to your Amazon Elastic File System (Amazon EFS) file systems.",
+            "type": "object",
+            "properties": {
+                "Gid": {
+                    "description": "The POSIX group ID used for all EFS operations by this user.",
+                    "type": "double"
+                },
+                "SecondaryGids": {
+                    "description": "The secondary POSIX group IDs used for all EFS operations by this user.",
+                    "type": "array",
+                    "maxItems": 16,
+                    "items": {
+                        "type": "double"
+                    }
+                },
+                "Uid": {
+                    "description": "The POSIX user ID used for all EFS operations by this user.",
+                    "type": "double"
+                }
+            },
+            "required": [
+                "Gid",
+                "Uid"
+            ],
+            "additionalProperties": false
+        },
+        "Role" : {
+            "description": "The Amazon Resource Name (ARN) of the AWS Identity and Access Management (IAM) role that controls your users' access to your Amazon S3 bucket or Amazon EFS file system.",
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 2048,
+            "pattern": "arn:.*role/.*"
+        },
+        "ServerId" : {
+            "description": "A system-assigned unique identifier for a server instance. This is the specific server that you added your user to.",
+            "type": "string",
+            "minLength": 19,
+            "maxLength": 19,
+            "pattern": "^s-([0-9a-f]{17})$"
+        },
+        "SshPublicKeys" : {
+            "description": "Specifies the public key portion of the Secure Shell (SSH) keys stored for the described user.",
+            "type": "array",
+            "maxItems": 5,
+            "items": {
+                "$ref": "#/definitions/SshPublicKey"
+            }
+        },
+        "Tags": {
+            "description": "An array of key-value pairs to apply to this resource.",
+            "type": "array",
+            "uniqueItems": true,
+            "insertionOrder": false,
+            "items": {
+                "$ref": "#/definitions/Tag"
+            }
+        },
+        "UserName" : {
+            "description": "A unique string that identifies a user and is associated with a ServerId",
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100,
+            "pattern": "^[\\w][\\w@.-]{2,99}$"
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "Role",
+        "ServerId",
+        "UserName"
+    ],
+    "createOnlyProperties": [
+        "/properties/ServerId",
+        "/properties/UserName"
+    ],
+    "readOnlyProperties": [
+        "/properties/Arn"
+    ],
+    "primaryIdentifier": [
+        "/properties/Arn"
+    ],
+    "handlers": {
+        "create": {
+            "permissions": [
+            ]
+        },
+        "read": {
+            "permissions": [
+            ]
+        },
+        "update": {
+            "permissions": [
+            ]
+        },
+        "delete": {
+            "permissions": [
+            ]
+        },
+        "list": {
+            "permissions": [
+            ]
+        }
+    }
+}

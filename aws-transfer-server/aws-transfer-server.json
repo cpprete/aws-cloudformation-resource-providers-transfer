@@ -1,0 +1,300 @@
+{
+    "typeName": "AWS::Transfer::Server",
+    "description": "Resource Type definition for AWS::Transfer::Server",
+
+    "definitions": {
+        "Tag": {
+            "description": "Creates a key-value pair for a specific resource.",
+            "type": "object",
+            "properties": {
+                "Key": {
+                    "type": "string",
+                    "description": "The name assigned to the tag that you create.",
+                    "minLength": 1,
+                    "maxLength": 128
+                },
+                "Value": {
+                    "type": "string",
+                    "description": "Contains one or more values that you assigned to the key name you create.",
+                    "minLength": 0,
+                    "maxLength": 256
+                }
+            },
+            "required": [
+                "Key",
+                "Value"
+            ],
+            "additionalProperties": false
+        },
+        "SecurityGroupId": {
+            "type": "string",
+            "pattern": "^sg-([0-9a-f]{8,17})$"
+        },
+        "Protocol": {
+            "description": "",
+            "type": "string",
+            "pattern": "FTP|FTPS|SFTP|AS2"
+        },
+        "As2Transport": {
+            "description": "Indicates the transport method for the AS2 messages. Currently, only HTTP is supported.",
+            "type": "string",
+            "pattern": "HTTP"
+        },
+        "WorkflowDetail": {
+            "type": "object",
+            "properties": {
+                "WorkflowId": {
+                    "type": "string",
+                    "pattern": "^w-([0-9a-f]{17})$"
+                },
+                "ExecutionRole": {
+                    "type": "string",
+                    "pattern": "^arn:.*role/.*$"
+                }
+            },
+            "required": [
+                "WorkflowId",
+                "ExecutionRole"
+            ],
+            "additionalProperties": false
+        }
+    },
+    "properties": {
+        "Certificate": {
+            "type": "string",
+            "maxLength": 1600
+        },
+        "Domain": {
+            "type": "string",
+            "pattern": "EFS|S3"
+        },
+        "EndpointDetails": {
+            "description": "The virtual private cloud (VPC) endpoint settings that are configured for your server. When you host your endpoint within your VPC, you can make your endpoint accessible only to resources within your VPC, or you can attach Elastic IP addresses and make your endpoint accessible to clients over the internet. Your VPC's default security groups are automatically assigned to your endpoint.",
+            "type": "object",
+            "properties": {
+                "AddressAllocationIds" : {
+                    "description": "A list of address allocation IDs that are required to attach an Elastic IP address to your server's endpoint.",
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 3,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "SecurityGroupIds" : {
+                    "description": "A list of security groups IDs that are available to attach to your server's endpoint.",
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 5,
+                    "items": {
+                        "$ref": "#/definitions/SecurityGroupId"
+                    }
+                },
+                "SubnetIds" : {
+                    "description": "A list of subnet IDs that are required to host your server endpoint in your VPC.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "VpcEndpointId" : {
+                    "description": "The ID of the VPC endpoint.",
+                    "type": "string",
+                    "pattern": "^vpce-([0-9a-f]{17})$",
+                    "minLength": 22,
+                    "maxLength": 22
+                },
+                "VpcId" : {
+                    "description": "The VPC ID of the virtual private cloud in which the server's endpoint will be hosted.",
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false
+        },
+        "EndpointType": {
+            "type": "string",
+            "pattern": "PUBLIC|VPC|VPC_ENDPOINT"
+        },
+        "IdentityProviderDetails": {
+            "description": "",
+            "type": "object",
+            "properties": {
+                "DirectoryId" : {
+                    "description": "The identifier of the AWS Directory Service directory that you want to stop sharing.",
+                    "type": "string",
+                    "pattern": "^d-([0-9a-f]{10})$",
+                    "minLength": 12,
+                    "maxLength": 12
+                },
+                "Function" : {
+                    "description": "The ARN for a lambda function to use for the Identity provider.",
+                    "type": "string",
+                    "pattern": "^arn:[a-z-]+:lambda:.*$",
+                    "minLength": 1,
+                    "maxLength": 170
+                },
+                "InvocationRole" : {
+                    "description": "Provides the type of InvocationRole used to authenticate the user account.",
+                    "type": "string",
+                    "pattern": "^arn:.*role/.*$",
+                    "minLength": 20,
+                    "maxLength": 2048
+                },
+                "Url" : {
+                    "description": "Provides the location of the service endpoint used to authenticate users.",
+                    "type": "string",
+                    "maxLength": 255
+                }
+            },
+            "additionalProperties": false
+        },
+        "IdentityProviderType": {
+            "type": "string",
+            "pattern": "SERVICE_MANAGED|API_GATEWAY|AWS_DIRECTORY_SERVICE|AWS_LAMBDA"
+        },
+        "LoggingRole": {
+            "type": "string",
+            "pattern": "^arn:.*role/.*$"
+        },
+        "PostAuthenticationLoginBanner": {
+            "description": "Specifies a string to display when users connect to a server. This string is displayed after the user authenticates.",
+            "type": "string",
+            "pattern": "[\\x09-\\x0D\\x20-\\x7E]+",
+            "minLength": 1,
+            "maxLength": 512
+        },
+        "PreAuthenticationLoginBanner": {
+            "description": "Specifies a string to display when users connect to a server. This string is displayed before the user authenticates.",
+            "type": "string",
+            "pattern": "[\\x09-\\x0D\\x20-\\x7E]+",
+            "minLength": 1,
+            "maxLength": 512
+        },
+        "ProtocolDetails": {
+            "description": "Protocol settings that are configured for your server.",
+            "type": "object",
+            "properties": {
+                "As2Transports" : {
+                    "description": "List of As2Transport objects.",
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/As2Transport"
+                    }
+                },
+                "PassiveIp" : {
+                    "type": "string",
+                    "maxLength": 15
+                },
+                "SetStatOption" : {
+                    "type": "string",
+                    "pattern": "DEFAULT|ENABLE_NO_OP"
+                },
+                "TlsSessionResumptionMode" : {
+                    "type": "string",
+                    "pattern": "ENFORCED|ENABLED|DISABLED"
+                }
+            },
+            "additionalProperties": false
+        },
+        "Protocols": {
+            "description": "Specifies the file transfer protocol or protocols over which your file transfer protocol client can connect to your server's endpoint.",
+            "type": "array",
+            "maxItems": 4,
+            "items": {
+                "$ref": "#/definitions/Protocol"
+            }
+        },
+        "SecurityPolicyName": {
+            "description": "Specifies the name of the security policy that is attached to the server.",
+            "type": "string",
+            "maxLength": 100,
+            "pattern": "TransferSecurityPolicy-.+"
+        },
+        "Tags": {
+            "description": "An array of key-value pairs to apply to this resource.",
+            "type": "array",
+            "uniqueItems": true,
+            "maxItems": 50,
+            "insertionOrder": false,
+            "items": {
+                "$ref": "#/definitions/Tag"
+            }
+        },
+        "WorkflowDetails": {
+            "description": "",
+            "type": "object",
+            "properties": {
+                "OnPartialUpload" : {
+                    "description": "A trigger that starts a workflow if a file is only partially uploaded. You can attach a workflow to a server that executes whenever there is a partial upload.",
+                    "type": "array",
+                    "maxItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/WorkflowDetail"
+                    }
+                },
+                "OnUpload" : {
+                    "description": "A trigger that starts a workflow: the workflow begins to execute after a file is uploaded.",
+                    "type": "array",
+                    "maxItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/WorkflowDetail"
+                    }
+                }
+            },
+            "additionalProperties": false
+        },
+        "Arn": {
+            "description": "Specifies the unique Amazon Resource Name (ARN) for the workflow.",
+            "type": "string",
+            "pattern": "arn:.*",
+            "minLength": 20,
+            "maxLength": 1600
+        },
+        "ServerId": {
+            "description": "A unique identifier for the server",
+            "type": "string",
+            "pattern": "^s-([0-9a-f]{17})$",
+            "minLength": 19,
+            "maxLength": 19
+        }
+    },
+    "additionalProperties": false,
+    "createOnlyProperties": [
+        "/properties/Domain",
+        "/properties/IdentityProviderType"
+    ],
+    "conditionalCreateOnlyProperties": [
+        "/properties/EndpointDetails/AddressAllocationIds"
+    ],
+    "readOnlyProperties": [
+        "/properties/Arn",
+        "/properties/ServerId"
+    ],
+    "primaryIdentifier": [
+        "/properties/Arn"
+    ],
+    "handlers": {
+        "create": {
+            "permissions": [
+            ]
+        },
+        "read": {
+            "permissions": [
+            ]
+        },
+        "update": {
+            "permissions": [
+            ]
+        },
+        "delete": {
+            "permissions": [
+            ]
+        },
+        "list": {
+            "permissions": [
+            ]
+        }
+    }
+}
