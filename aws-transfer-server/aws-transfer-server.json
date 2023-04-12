@@ -273,7 +273,7 @@
         "/properties/ServerId"
     ],
     "primaryIdentifier": [
-        "/properties/Arn"
+        "/properties/ServerId"
     ],
     "handlers": {
         "create": {

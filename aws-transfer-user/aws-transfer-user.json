@@ -153,6 +153,16 @@
             "minLength": 2,
             "maxLength": 100,
             "pattern": "^[\\w][\\w@.-]{2,99}$"
+        },
+        "Id": {
+            "type": "string"
+        },
+        "Arn": {
+            "description": "Specifies the unique Amazon Resource Name (ARN) for the workflow.",
+            "type": "string",
+            "pattern": "arn:.*",
+            "minLength": 20,
+            "maxLength": 1600
         }
     },
     "additionalProperties": false,
@@ -166,10 +176,11 @@
         "/properties/UserName"
     ],
     "readOnlyProperties": [
+        "/properties/Id",
         "/properties/Arn"
     ],
     "primaryIdentifier": [
-        "/properties/Arn"
+        "/properties/Id"
     ],
     "handlers": {
         "create": {
